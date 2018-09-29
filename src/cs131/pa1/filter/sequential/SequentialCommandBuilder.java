@@ -58,7 +58,6 @@ public class SequentialCommandBuilder {
 	}
 	
 	private static String adjustCommandToRemoveFinalFilter(String command){
-//		System.out.println("command is:"+command);
 //		command = command.trim();
 		//For the case that no need to output to a file, simply remove the last subcommand
 		if (!command.contains(">")) {
@@ -70,13 +69,12 @@ public class SequentialCommandBuilder {
 			//3. The command has exactly one ">", but ">" is the first subcommand
 			//4. The command has exactly one ">", but ">" is the end of the command with no output file name
 			//The correct format would be, ">" is in the last subcommand, as well as an output file name is given
-			System.out.println(command);
 			String[] formatCheck = command.split(">");
-			System.out.println(formatCheck.length);
-			for(int i=0; i<formatCheck.length;i++) {
-				System.out.println(formatCheck[i]);
-			}
 			String errorCom;
+			if(formatCheck.length == 0) {
+				System.out.printf(Message.REQUIRES_PARAMETER.toString(), ">");
+				return null;
+			}
 			if (formatCheck.length>2 || (formatCheck.length == 2 && formatCheck[1].contains("|"))) {
 				if (formatCheck[0].contains("|")) {
 					errorCom = formatCheck[0].substring(formatCheck[0].lastIndexOf('|')).trim();
@@ -86,14 +84,14 @@ public class SequentialCommandBuilder {
 				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), errorCom);
 				return null;
 			} else {
-				if (formatCheck[0].trim().lastIndexOf('>') == 0) {
-					System.out.printf(Message.REQUIRES_INPUT.toString(), "> "+formatCheck[0].substring(0, formatCheck[0].indexOf('|')).trim());
+				if (formatCheck[1].trim().lastIndexOf('>') == 0) {
+					System.out.printf(Message.REQUIRES_INPUT.toString(), "> "+formatCheck[1].substring(0, formatCheck[1].indexOf('|')).trim());
 					return null;
-				} else if (formatCheck[0].trim().lastIndexOf('>') == (formatCheck[0].length()-1)) {
-					System.out.printf(Message.REQUIRES_PARAMETER.toString(), formatCheck[0].substring(formatCheck[0].lastIndexOf('|')).trim()+" >");
+				} else if (formatCheck[1].trim().lastIndexOf('>') == (formatCheck[1].length()-1)) {
+					System.out.printf(Message.REQUIRES_PARAMETER.toString(), formatCheck[1].substring(formatCheck[1].lastIndexOf('|')).trim()+" >");
 					return null;
 				} else {
-					return formatCheck[0].trim();
+					return command;
 				}
 			}
 		}
@@ -126,15 +124,17 @@ public class SequentialCommandBuilder {
 		String[] splitCom = command.split("\\|");
 		if (command.contains(">")) {
 			String lastCom = splitCom[splitCom.length-1];
-			String lastCom1 = lastCom.substring(0,lastCom.indexOf(">"));
-			splitCom[splitCom.length-1] = lastCom1;
-			String lastCom2 = lastCom.substring(lastCom.indexOf(">"));
-			String[] splitFinal = new String[splitCom.length+1];
-			for(int i = 0; i<splitCom.length; i++) {
-				splitFinal[i] = splitCom[i];
+			if(lastCom.indexOf(">") != 0) {
+				String lastCom1 = lastCom.substring(0,lastCom.indexOf(">"));
+				splitCom[splitCom.length-1] = lastCom1;
+				String lastCom2 = lastCom.substring(lastCom.indexOf(">"));
+				String[] splitFinal = new String[splitCom.length+1];
+				for(int i = 0; i<splitCom.length; i++) {
+					splitFinal[i] = splitCom[i];
+				}
+				splitFinal[splitCom.length] = lastCom2;
+				splitCom = splitFinal;
 			}
-			splitFinal[splitCom.length] = lastCom2;
-			splitCom = splitFinal;
 		}
 		Iterator<SequentialFilter> litr = filters.iterator();
 		SequentialFilter curr;

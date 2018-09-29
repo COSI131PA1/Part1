@@ -19,14 +19,14 @@ public class GrepFilter extends SequentialFilter {
 			}
 		}
 		//to deal with the case that the target string is a single word
-		if (target.equals(null)) {
+		if (target == null) {
 			String[] inputSplit = input.split(" ");
 			if(inputSplit.length > 0) {
 				target = inputSplit[1];
 			}
 		}
 		//to deal with invalid input
-		if (target.equals(null)) {
+		if (target == null) {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), input);
 		}
 	}
