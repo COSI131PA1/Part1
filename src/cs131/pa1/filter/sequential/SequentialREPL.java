@@ -9,24 +9,27 @@ public class SequentialREPL {
 	static String currentWorkingDirectory = System.getProperty("user.dir");
 	
 	public static void main(String[] args) {
-		System.out.println(Message.NEWCOMMAND);
-		System.out.println(Message.WELCOME);
+		System.out.print(Message.WELCOME);
+		System.out.print(Message.NEWCOMMAND);
 		Scanner console = new Scanner(System.in);
 		String command = "";
 		while (console.hasNextLine()){
 			command = console.nextLine();
-			if (command.equals("EXIT")){
+			if (command.equals("EXIT") || command.equals("exit")){
 				System.out.print(Message.GOODBYE);
 				console.close();
 				break;
 			} else {
 				LinkedList<SequentialFilter> commandFilter = (LinkedList<SequentialFilter>) SequentialCommandBuilder.createFiltersFromCommand(command);
-				for (SequentialFilter sf: commandFilter) {
-					sf.process();
+				if (commandFilter != null) {
+					for (SequentialFilter sf: commandFilter) {
+						sf.process();
+					}
 				}
 			}
-			System.out.println(Message.NEWCOMMAND);
+			System.out.print(Message.NEWCOMMAND);
 		} 
+		
 		console.close();
 	}
 }

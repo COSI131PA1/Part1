@@ -8,20 +8,25 @@ import cs131.pa1.filter.Message;
 public class SequentialCommandBuilder {
 	public static List<SequentialFilter> createFiltersFromCommand(String command){
 		List<SequentialFilter> subCommandList = new LinkedList<SequentialFilter>();
+		int size = 0;
 		if (!command.isEmpty()) {
 			String adjustedCom = adjustCommandToRemoveFinalFilter(command);
 			if (adjustedCom == null) {
 				return null;
 			} 
-			String[] subCommand = adjustedCom.split("|");
+			String[] subCommand = adjustedCom.split("\\|");
 			for (String subCom : subCommand) {
+				subCom = subCom.trim();
 				SequentialFilter sequentialFilter = constructFilterFromSubCommand(subCom);
 				if (sequentialFilter == null) {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
 					return null;
 				}
-				sequentialFilter.setPrevFilter(subCommandList.get(subCommandList.size()-1));
+				if(size !=0 ) {
+					sequentialFilter.setPrevFilter(subCommandList.get(size-1));
+				}
 				subCommandList.add(sequentialFilter);
+				size++;
 			}
 			String lastSubCom = command.substring(adjustedCom.length());
 			SequentialFilter lastSequentialFilter = determineFinalFilter(lastSubCom);
@@ -35,7 +40,6 @@ public class SequentialCommandBuilder {
 		return null;
 	}
 	
-	//Might need to check is the last subcommand is a valid command?
 	private static SequentialFilter determineFinalFilter(String command){
 		//The output of the final filter can either be printed on the screen or write into a file
 		//If the final subcommand contains ">", meaning it should output to a file
@@ -54,7 +58,8 @@ public class SequentialCommandBuilder {
 	}
 	
 	private static String adjustCommandToRemoveFinalFilter(String command){
-		command = command.trim();
+//		System.out.println("command is:"+command);
+//		command = command.trim();
 		//For the case that no need to output to a file, simply remove the last subcommand
 		if (!command.contains(">")) {
 			return command;
@@ -65,7 +70,12 @@ public class SequentialCommandBuilder {
 			//3. The command has exactly one ">", but ">" is the first subcommand
 			//4. The command has exactly one ">", but ">" is the end of the command with no output file name
 			//The correct format would be, ">" is in the last subcommand, as well as an output file name is given
+			System.out.println(command);
 			String[] formatCheck = command.split(">");
+			System.out.println(formatCheck.length);
+			for(int i=0; i<formatCheck.length;i++) {
+				System.out.println(formatCheck[i]);
+			}
 			String errorCom;
 			if (formatCheck.length>2 || (formatCheck.length == 2 && formatCheck[1].contains("|"))) {
 				if (formatCheck[0].contains("|")) {
@@ -92,28 +102,28 @@ public class SequentialCommandBuilder {
 	private static SequentialFilter constructFilterFromSubCommand(String subCommand){
 		String[] commandName =  subCommand.split(" ");
 		SequentialFilter sequentialFilter = null;
-		if (commandName[0] == "grep") {
+		if (commandName[0].equals("grep")) {
 			sequentialFilter = new GrepFilter(subCommand);
-		} else if (commandName[0] == ">") {
+		} else if (commandName[0].equals(">")) {
 			sequentialFilter = new SimplePromptFilter(subCommand);
-		} else if (commandName[0] == "pwd") {
+		} else if (commandName[0].equals("pwd")) {
 			sequentialFilter = new PwdFilter();
-		} else if (commandName[0] == "ls") {
+		} else if (commandName[0].equals("ls")) {
 			sequentialFilter = new LsFilter();
-		} else if (commandName[0] == "cd") {
+		} else if (commandName[0].equals("cd")) {
 			sequentialFilter = new CdFilter(subCommand);
-		} else if (commandName[0] == "cat") {
+		} else if (commandName[0].equals("cat")) {
 			sequentialFilter = new CatFilter(subCommand);
-		} else if (commandName[0] == "wc") {
+		} else if (commandName[0].equals("wc")) {
 			sequentialFilter = new WcFilter();
-		} else if (commandName[0] == "uniq") {
+		} else if (commandName[0].equals("uniq")) {
 			sequentialFilter = new UniqFilter();
 		} 
 		return sequentialFilter;
 	}
 
 	private static boolean linkFilters(List<SequentialFilter> filters, String command){
-		String[] splitCom = command.split("|");
+		String[] splitCom = command.split("\\|");
 		if (command.contains(">")) {
 			String lastCom = splitCom[splitCom.length-1];
 			String lastCom1 = lastCom.substring(0,lastCom.indexOf(">"));
