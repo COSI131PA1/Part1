@@ -5,13 +5,13 @@ import java.io.*;
 public class SimplePromptFilter extends SequentialFilter {
 	private String targetFileName;
 	private File targetFile;
-	public SimplePromptFilter (String fileName) throws Exception {
+	public SimplePromptFilter (String fileName) {
+		super();
 		String[] fileNameSplit = fileName.split(" ");
 		if (fileNameSplit.length > 0) {
 			targetFileName =  fileNameSplit[1];
 		} else {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), fileName);
-			throw new Exception();
 		}
 		File targetFile = new File(targetFileName);
 		//To get if the file with given name already exists
@@ -19,7 +19,12 @@ public class SimplePromptFilter extends SequentialFilter {
 		if (targetFile.exists()) {
 			targetFile.delete();
 		} 
-		targetFile.createNewFile();
+		try {
+			targetFile.createNewFile();
+		} catch (IOException ioe) {
+			System.out.println("Error creating new file: " + ioe);
+		}
+		
 	}
 	protected String processLine(String line) {
 		FileWriter fw;

@@ -6,9 +6,8 @@ import java.util.LinkedList;
 import cs131.pa1.filter.Message;
 
 public class SequentialCommandBuilder {
-	private List<SequentialFilter> subCommandList = new LinkedList<SequentialFilter>();
-	private int counter = 0;
-	public static List<SequentialFilter> createFiltersFromCommand(String command) throws Exception{
+	public static List<SequentialFilter> createFiltersFromCommand(String command){
+		List<SequentialFilter> subCommandList = new LinkedList<SequentialFilter>();
 		if (!command.isEmpty()) {
 			String adjustedCom = adjustCommandToRemoveFinalFilter(command);
 			if (adjustedCom == null) {
@@ -19,36 +18,35 @@ public class SequentialCommandBuilder {
 				SequentialFilter sequentialFilter = constructFilterFromSubCommand(subCom);
 				if (sequentialFilter == null) {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
-					throw new Exception();
 					return null;
 				}
+				sequentialFilter.setPrevFilter(subCommandList.get(subCommandList.size()-1));
 				subCommandList.add(sequentialFilter);
 			}
 			String lastSubCom = command.substring(adjustedCom.length());
 			SequentialFilter lastSequentialFilter = determineFinalFilter(lastSubCom);
 			subCommandList.add(lastSequentialFilter);
-			if (linkFilters(subCommandList)) {
+			if (linkFilters(subCommandList,command)) {
 				return subCommandList;
 			}
 		} else {
 			System.out.printf(Message.COMMAND_NOT_FOUND.toString(), command);
-			throw new Exception();
 		}
 		return null;
 	}
 	
 	//Might need to check is the last subcommand is a valid command?
-	private static SequentialFilter determineFinalFilter(String command) throws Exception{
+	private static SequentialFilter determineFinalFilter(String command){
 		//The output of the final filter can either be printed on the screen or write into a file
 		//If the final subcommand contains ">", meaning it should output to a file
 		if (command.contains(">")) {
 			String[] output = command.split(">");
 				//For the case that there is a destination file
 				if (output.length > 1) {
-					return new WriteFileFilter();
+					return new SimplePromptFilter(command);
 				} else {
 					System.out.printf(Message.REQUIRES_PARAMETER.toString(), command);
-					throw new Exception();
+					return null;
 				}
 		} else {
 			return new PrintFilter();
@@ -59,8 +57,7 @@ public class SequentialCommandBuilder {
 		command = command.trim();
 		//For the case that no need to output to a file, simply remove the last subcommand
 		if (!command.contains(">")) {
-			int lastIndex = command.lastIndexOf('|');
-			return command.substring(0, lastIndex);
+			return command;
 		} else {
 			//For the case that need to output to a file, there are 4 cases with error
 			//1. The command has more than one ">"
@@ -94,7 +91,7 @@ public class SequentialCommandBuilder {
 	
 	private static SequentialFilter constructFilterFromSubCommand(String subCommand){
 		String[] commandName =  subCommand.split(" ");
-		SequentialFilter sequentialFilter;
+		SequentialFilter sequentialFilter = null;
 		if (commandName[0] == "grep") {
 			sequentialFilter = new GrepFilter(subCommand);
 		} else if (commandName[0] == ">") {
@@ -104,21 +101,31 @@ public class SequentialCommandBuilder {
 		} else if (commandName[0] == "ls") {
 			sequentialFilter = new LsFilter();
 		} else if (commandName[0] == "cd") {
-			sequentialFilter = new CdFilter();
+			sequentialFilter = new CdFilter(subCommand);
 		} else if (commandName[0] == "cat") {
-			sequentialFilter = new CatFilter();
+			sequentialFilter = new CatFilter(subCommand);
 		} else if (commandName[0] == "wc") {
 			sequentialFilter = new WcFilter();
 		} else if (commandName[0] == "uniq") {
 			sequentialFilter = new UniqFilter();
 		} 
-		if (counter > 0 && sequentialFilter != null) {
-			sequentialFilter.setPrevFilter(subCommandList[counter-1]);
-		}
 		return sequentialFilter;
 	}
 
-	private static boolean linkFilters(List<SequentialFilter> filters){
+	private static boolean linkFilters(List<SequentialFilter> filters, String command){
+		String[] splitCom = command.split("|");
+		if (command.contains(">")) {
+			String lastCom = splitCom[splitCom.length-1];
+			String lastCom1 = lastCom.substring(0,lastCom.indexOf(">"));
+			splitCom[splitCom.length-1] = lastCom1;
+			String lastCom2 = lastCom.substring(lastCom.indexOf(">"));
+			String[] splitFinal = new String[splitCom.length+1];
+			for(int i = 0; i<splitCom.length; i++) {
+				splitFinal[i] = splitCom[i];
+			}
+			splitFinal[splitCom.length] = lastCom2;
+			splitCom = splitFinal;
+		}
 		Iterator<SequentialFilter> litr = filters.iterator();
 		SequentialFilter curr;
 		SequentialFilter next;
@@ -126,19 +133,19 @@ public class SequentialCommandBuilder {
 		curr = litr.next();
 		//Check if the first subcommand is a command that requires input
 		if (curr instanceof GrepFilter || curr instanceof SimplePromptFilter || curr instanceof WcFilter || curr instanceof UniqFilter) {
-			throw new Exception(Message.REQUIRES_INPUT.toString(), subCommandList[0]);
+			System.out.printf(Message.REQUIRES_INPUT.toString(), splitCom[0]);
 			return false;
 		}
-		While (litr.hasNext()) {
+		while (litr.hasNext()) {
 			next = litr.next();
 			//There are in total two conditions that can cause errors
 			//1. Current filter gives output while the next filter cannot have input
 			//2. Current filter gives no output while the next filter requires input
-			if ((next instanceof PwdFilter || next instanceof LsFilter || next instanceof CdFilter || next instanceof CatFilter) && (!curr instanceof CdFilter)) {
-				throw new Exception(Message.CANNOT_HAVE_INPUT.toString(), subCommandList[index+1]);
+			if ((next instanceof PwdFilter || next instanceof LsFilter || next instanceof CdFilter || next instanceof CatFilter) && !(curr instanceof CdFilter)) {
+				System.out.printf(Message.CANNOT_HAVE_INPUT.toString(), splitCom[index+1]);
 				return false;
 			} else if ((next instanceof GrepFilter || next instanceof WcFilter || next instanceof SimplePromptFilter || next instanceof UniqFilter) && (curr instanceof CdFilter)) {
-				throw new Exception(Message.REQUIRES_INPUT.toString(), subCommandList[index+1]);
+				System.out.printf(Message.REQUIRES_INPUT.toString(), splitCom[index+1]);
 				return false;
 			}
 			next.setPrevFilter(curr);

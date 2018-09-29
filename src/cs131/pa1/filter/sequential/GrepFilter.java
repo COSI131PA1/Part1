@@ -4,12 +4,12 @@ import cs131.pa1.filter.Message;
 public class GrepFilter extends SequentialFilter {
 	private String target;
 	
-	public GrepFilter (String input) throws Exception {
+	public GrepFilter (String input) {
 		super();
 		grabTarget(input);
 	}
 	
-	private void grabTarget (String input) throws Exception {
+	private void grabTarget (String input) {
 		//to deal with the case that the target string is a phrase (as described in the link given in instruction)
 		if (input.indexOf('\'') != -1) {
 			int start = input.indexOf('\'');
@@ -28,7 +28,6 @@ public class GrepFilter extends SequentialFilter {
 		//to deal with invalid input
 		if (target.equals(null)) {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), input);
-			throw new Exception();
 		}
 	}
 	protected String processLine (String line) {
