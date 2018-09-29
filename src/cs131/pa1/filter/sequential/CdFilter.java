@@ -15,29 +15,32 @@ public class CdFilter extends SequentialFilter{
 		if (f.isAbsolute()) {
 			System.out.print("Does Not Support Absolute Path");
 		} 
-		if (!path.isEmpty()) {
 		String currentDir = SequentialREPL.currentWorkingDirectory;
 		String[] currentDirStrings = currentDir.split("/");
 		String[] pathString = path.split("\\s+");
-		for (String d: pathString) {
-			if (d.equals(".")){
-				currentDir = SequentialREPL.currentWorkingDirectory;
+		String finalDir = pathString[pathString.length-1];
+		if (finalDir.equals(".")){
+			currentDir = SequentialREPL.currentWorkingDirectory;
+		} else if (finalDir.equals("..")) { 
+			currentDir = "";
+			for (int m = 0; m < currentDirStrings.length-1; m++) {
+				if (m == 0) {
+					currentDir = currentDir + currentDirStrings[m];
+				} else {
+					currentDir = currentDir + "/" + currentDirStrings[m];
+				}
 			}
-			if (d.equals("..")) { 
-				currentDir = currentDir.substring(0, currentDirStrings.length - 2);
-			} 
-			File dir = new File(d);
-			for (int i = 0; i<currentDirStrings.length; i++) {
-				int finalDir = 1;
-				if (currentDirStrings[i].equals(d)) {
-					finalDir = i;
-					if (dir.isDirectory() || dir.isFile()) {
-						currentDir = currentDirStrings[finalDir];
-						SequentialREPL.currentWorkingDirectory = currentDir;
+		} else {
+			if (!finalDir.isEmpty()) {
+				File currentFile = new File(currentDir);
+				File[] allFiles = currentFile.listFiles();
+				for (File n: allFiles) {
+					if (finalDir.equals(n.getName())) {
+						currentDir = n.getAbsolutePath();
+						SequentialREPL.currentWorkingDirectory = n.getAbsolutePath();
 					}
 				}
 			}
-		}
 		}
 	}
 	

@@ -22,15 +22,19 @@ public class SequentialCommandBuilder {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
 					return null;
 				}
-				if(size !=0 ) {
-					sequentialFilter.setPrevFilter(subCommandList.get(size-1));
-				}
+//				if(size !=0 ) {
+//					sequentialFilter.setPrevFilter(subCommandList.get(size-1));
+//				}
 				subCommandList.add(sequentialFilter);
 				size++;
 			}
-			String lastSubCom = command.substring(adjustedCom.length());
-			SequentialFilter lastSequentialFilter = determineFinalFilter(lastSubCom);
-			subCommandList.add(lastSequentialFilter);
+			if (command.length() == adjustedCom.length()) {
+				subCommandList.add(new PrintFilter());
+			} else {
+				String lastSubCom = command.substring(adjustedCom.length());
+				SequentialFilter lastSequentialFilter = determineFinalFilter(lastSubCom);
+				subCommandList.add(lastSequentialFilter);
+			}
 			if (linkFilters(subCommandList,command)) {
 				return subCommandList;
 			}
