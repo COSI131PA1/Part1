@@ -7,11 +7,11 @@ public class SimplePromptFilter extends SequentialFilter {
 	private File targetFile;
 	public SimplePromptFilter (String fileName) {
 		super();
-		String[] fileNameSplit = fileName.split(" ");
+		String[] fileNameSplit = fileName.split("\\s+");
 		if (fileNameSplit.length > 0) {
 			targetFileName =  fileNameSplit[1].trim();
 		} else {
-			System.out.printf(Message.REQUIRES_PARAMETER.toString(), fileName);
+			System.out.printf(Message.REQUIRES_PARAMETER.toString(), ">");
 		}
 		File targetFile = new File(targetFileName);
 		//To get if the file with given name already exists

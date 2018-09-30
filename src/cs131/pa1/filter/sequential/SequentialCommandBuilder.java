@@ -21,9 +21,6 @@ public class SequentialCommandBuilder {
 				if (sequentialFilter == null) {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
 				}
-//				if(size !=0 ) {
-//					sequentialFilter.setPrevFilter(subCommandList.get(size-1));
-//				}
 				if(sequentialFilter != null) {
 					subCommandList.add(sequentialFilter);
 					size++;
@@ -34,7 +31,9 @@ public class SequentialCommandBuilder {
 			} else {
 				String lastSubCom = command.substring(adjustedCom.length());
 				SequentialFilter lastSequentialFilter = determineFinalFilter(lastSubCom);
-				subCommandList.add(lastSequentialFilter);
+				if(lastSequentialFilter!=null) {
+					subCommandList.add(lastSequentialFilter);
+				}
 			}
 			if (linkFilters(subCommandList,command)) {
 				return subCommandList;
@@ -68,19 +67,24 @@ public class SequentialCommandBuilder {
 		if (!command.contains(">")) {
 			return command;
 		} else {
-			//For the case that need to output to a file, there are 4 cases with error
-			//1. The command has more than one ">"
-			//2. The command has exactly one ">", but ">" is not in the last subcommand
-			//3. The command has exactly one ">", but ">" is the first subcommand
-			//4. The command has exactly one ">", but ">" is the end of the command with no output file name
-			//The correct format would be, ">" is in the last subcommand, as well as an output file name is given
 			String[] formatCheck = command.split(">");
 			String errorCom;
-			if(formatCheck.length == 0) {
+			//For the case that need to output to a file, there are 4 cases with error
+			//1. If the ">" is the first index of the command
+			//2. If the ">" is the last index of the command
+			//3. If the command has more then one ">"
+			//4. If the command has exactly one ">", but ">" is not in the last subcommand
+			//The correct format would be, ">" is in the last subcommand, as well as an output file name is given
+			if(command.indexOf(">") == 0) {
+				System.out.printf(Message.REQUIRES_INPUT.toString(), command);
+				return null;
+			} else if (command.indexOf(">") == command.length()-1) {
 				System.out.printf(Message.REQUIRES_PARAMETER.toString(), ">");
 				return null;
-			}
-			if (formatCheck.length>2 || (formatCheck.length == 2 && formatCheck[1].contains("|"))) {
+			} else if (formatCheck.length>2) {
+				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), formatCheck[0].trim());
+				return null;
+			} else if (formatCheck.length == 2 && formatCheck[1].contains("|")) {
 				if (formatCheck[0].contains("|")) {
 					errorCom = formatCheck[0].substring(formatCheck[0].lastIndexOf('|')).trim();
 				} else {
@@ -88,19 +92,8 @@ public class SequentialCommandBuilder {
 				}
 				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), errorCom);
 				return null;
-			} else if (formatCheck.length == 2){
-				if (formatCheck[1].trim().lastIndexOf('>') == 0) {
-					System.out.printf(Message.REQUIRES_INPUT.toString(), "> "+formatCheck[1].substring(0, formatCheck[1].indexOf('|')).trim());
-					return null;
-				} else if (formatCheck[1].trim().lastIndexOf('>') == (formatCheck[1].length()-1)) {
-					System.out.printf(Message.REQUIRES_PARAMETER.toString(), formatCheck[1].substring(formatCheck[1].lastIndexOf('|')).trim()+" >");
-					return null;
-				} else {
-					return command;
-				}
-			} else {
-				return command;
 			}
+			return formatCheck[0].trim();
 		}
 	}
 	
