@@ -22,8 +22,10 @@ public class SequentialREPL {
 			} else {
 				LinkedList<SequentialFilter> commandFilter = (LinkedList<SequentialFilter>) SequentialCommandBuilder.createFiltersFromCommand(command);
 				if (commandFilter != null) {
-					for (SequentialFilter sf: commandFilter) {
-						sf.process();
+					if(!(commandFilter.get(0) instanceof PrintFilter)) {
+						for (SequentialFilter sf: commandFilter) {
+							sf.process();
+						}
 					}
 				}
 			}
