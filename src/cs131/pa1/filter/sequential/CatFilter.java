@@ -25,8 +25,6 @@ public class CatFilter extends SequentialFilter {
 				this.filesRead.add(inputArray[i]);
 			}
 		}
-		
-
 	}
 	
 	
