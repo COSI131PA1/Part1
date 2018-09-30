@@ -13,7 +13,7 @@ public class SimplePromptFilter extends SequentialFilter {
 		} else {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), ">");
 		}
-		File targetFile = new File(targetFileName);
+		this.targetFile = new File(targetFileName);
 		//To get if the file with given name already exists
 		//If not, create a new file. If already existed, rewrite with a new file.
 		if (targetFile.exists()) {
@@ -22,7 +22,7 @@ public class SimplePromptFilter extends SequentialFilter {
 		try {
 			targetFile.createNewFile();
 		} catch (IOException ioe) {
-			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
+			System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
 		}
 	}
 	protected String processLine(String line) {
