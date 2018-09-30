@@ -6,9 +6,10 @@ import cs131.pa1.filter.sequential.*;
 
 public class SequentialREPL {
 
-	static String currentWorkingDirectory = System.getProperty("user.dir");
+	static String currentWorkingDirectory;
 	
 	public static void main(String[] args) {
+		currentWorkingDirectory = System.getProperty("user.dir");
 		System.out.print(Message.WELCOME);
 		System.out.print(Message.NEWCOMMAND);
 		Scanner console = new Scanner(System.in);
