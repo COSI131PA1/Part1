@@ -11,7 +11,7 @@ public class SimplePromptFilter extends SequentialFilter {
 		if (fileNameSplit.length > 0) {
 			targetFileName =  fileNameSplit[1].trim();
 		} else {
-			System.out.printf(Message.REQUIRES_PARAMETER.toString(), fileName);
+			System.out.printf(Message.REQUIRES_PARAMETER.toString(), ">");
 		}
 		File targetFile = new File(targetFileName);
 		//To get if the file with given name already exists

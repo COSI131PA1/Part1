@@ -9,7 +9,9 @@ public class UniqFilter extends SequentialFilter{
 	public void process() {
 		while(!this.input.isEmpty()) {
 			String element = this.input.poll();
-			this.output.add(processLine(element));
+			if(processLine(element) != null) {
+				this.output.add(processLine(element));
+			}
 			inputSet.add(element);
 		}
 	}

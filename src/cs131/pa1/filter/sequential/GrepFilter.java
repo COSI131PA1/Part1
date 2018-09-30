@@ -35,9 +35,9 @@ public class GrepFilter extends SequentialFilter {
 		}
 	}
 	protected String processLine (String line) {
-		if (line.contains(target)) {
+		if (target !=null && (line.contains(target))) {
 			return line;
-		} 
+		}
 		return null;
 	};
 }

@@ -24,6 +24,7 @@ public class SequentialREPL {
 				if (commandFilter != null) {
 					if(!(commandFilter.get(0) instanceof PrintFilter)) {
 						for (SequentialFilter sf: commandFilter) {
+//							System.out.println(sf.toString());
 							sf.process();
 						}
 					}
