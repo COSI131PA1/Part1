@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Scanner;
 
+import cs131.pa1.filter.Message;
+
 public class CatFilter extends SequentialFilter {
 	private String command;
 	private ArrayList<String> filesRead =  new ArrayList<String>();
@@ -23,31 +25,46 @@ public class CatFilter extends SequentialFilter {
 				this.filesRead.add(inputArray[i]);
 			}
 		}
+		
 
 	}
 	
 	
 	public void process() {
 		getFiles();
-//		output.add("aaaa");
-//		System.out.println("!!!! " + output);
-//		System.out.println(this.output.isEmpty());
-//		System.out.print("new output: "+ output.size());
 		String currentDir = SequentialREPL.currentWorkingDirectory;
-		for (String fileName: this.filesRead) {
-			File f = new File(fileName);
-			Scanner console;
-			try {
-				console = new Scanner (f);
-				while (console.hasNextLine()) {
-					this.output.add(console.nextLine());
-//					System.out.println(console.nextLine());
+		if (filesRead.size() == 0) {
+			System.out.printf(Message.REQUIRES_PARAMETER.toString(), "cat");
+		} else {
+			Boolean allExist = true;
+			for (String fileName: this.filesRead) {
+				File f = new File(fileName);
+				if (!f.exists()) {
+					allExist = false;
+					System.out.printf(Message.FILE_NOT_FOUND.toString(), command);
 				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
 			}
-			processedFile++;
+			if (allExist) {
+				for (String fileName: this.filesRead) {
+					File f = new File(fileName);
+					Scanner console;
+					try {
+						console = new Scanner (f);
+						while (console.hasNextLine()) {
+							this.output.add(console.nextLine());
+						}
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					processedFile++;
+				}
+			}
+			
 		}
+	}
+	
+	public String toString() {
+		return "cat";
 	}
 	public boolean isDone() {
 		return processedFile >= filesRead.size();

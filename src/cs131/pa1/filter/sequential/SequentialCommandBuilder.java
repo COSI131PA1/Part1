@@ -18,13 +18,11 @@ public class SequentialCommandBuilder {
 			for (String subCom : subCommand) {
 				subCom = subCom.trim();
 				SequentialFilter sequentialFilter = constructFilterFromSubCommand(subCom);
-				if (sequentialFilter == null) {
+				if (sequentialFilter instanceof IncorrectComFilter) {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
 				}
-				if(sequentialFilter != null) {
-					subCommandList.add(sequentialFilter);
-					size++;
-				}
+				subCommandList.add(sequentialFilter);
+				size++;
 			}
 			if (command.length() == adjustedCom.length()) {
 				subCommandList.add(new PrintFilter());
@@ -88,7 +86,7 @@ public class SequentialCommandBuilder {
 				if (formatCheck[0].contains("|")) {
 					errorCom = formatCheck[0].substring(formatCheck[0].lastIndexOf('|')).trim();
 				} else {
-					errorCom = formatCheck[0].trim();
+					errorCom = "> "+formatCheck[1].substring(0,formatCheck[1].indexOf('|')).trim();
 				}
 				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), errorCom);
 				return null;
@@ -116,7 +114,9 @@ public class SequentialCommandBuilder {
 			sequentialFilter = new WcFilter();
 		} else if (commandName[0].equals("uniq")) {
 			sequentialFilter = new UniqFilter();
-		} 
+		} else {
+			sequentialFilter = new IncorrectComFilter();
+		}
 		return sequentialFilter;
 	}
 
