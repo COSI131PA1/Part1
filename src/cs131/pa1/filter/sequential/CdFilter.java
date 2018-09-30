@@ -10,9 +10,10 @@ public class CdFilter extends SequentialFilter{
 	private String path;
 	private String currentDir;
 	
+	
 	public CdFilter(String input) {
 		this.path = input;
-		currentDir = SequentialREPL.currentWorkingDirectory;
+		this.currentDir = SequentialREPL.currentWorkingDirectory;
 	}
 	
 	public String toString() {
@@ -21,7 +22,6 @@ public class CdFilter extends SequentialFilter{
 	
 	
 	public void process(){
-		String[] currentDirStrings = this.currentDir.trim().split("/");
 		String[] pathString = path.split("\\s+");
 		String finalDir = pathString[pathString.length-1].trim();
 		if (finalDir.equals("cd")) {
