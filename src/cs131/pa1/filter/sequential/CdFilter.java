@@ -20,7 +20,6 @@ public class CdFilter extends SequentialFilter{
 		return "cd";
 	}
 	
-	
 	public void process(){
 		String[] pathString = path.split("\\s+");
 		String finalDir = pathString[pathString.length-1].trim();

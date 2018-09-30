@@ -15,7 +15,7 @@ public class LsFilter extends SequentialFilter {
 		File[] allFiles = currentDir.listFiles();
 		for (File f: allFiles) {
 			if (f.isDirectory() || f.isFile()) {
-				if (f.getName() != null) {
+				if (f.getName() != null && !f.getName().equals(".DS_Store")) {
 					this.output.add(f.getName());
 				}
 			}
