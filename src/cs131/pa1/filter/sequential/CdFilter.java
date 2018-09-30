@@ -10,6 +10,10 @@ public class CdFilter extends SequentialFilter{
 		this.path = input;
 	}
 	
+	public String toString() {
+		return "cd";
+	}
+	
 	public void process(){
 		File f = new File(path);
 		if (f.isAbsolute()) {

@@ -5,9 +5,6 @@ public class WcFilter extends SequentialFilter{
 	private int numLines = 0;
 	private int numWords = 0;
 	private int numChars = 0;
-	public WcFilter () {
-		
-	}
 	
 	public void addInput(String s) {
 		this.input.add(s);
@@ -16,20 +13,23 @@ public class WcFilter extends SequentialFilter{
 	protected String processLine(String line) {
 		if(line.length() != 0) {
 			numLines++;
+			System.out.println(numLines);
 		}
-		Scanner s = new Scanner(line);
-		do {
-			numWords++;
-		} while (s.hasNext());
-		String[] words = line.split(" ");
+		String[] words = line.split("\\s+");
 		for (String word : words) {
+			numWords++;
+			System.out.println(numWords);
 			numChars+=word.length();
+			System.out.println(numChars);
 		}
-		s.close();
 		if (isDone()) {
 			return numLines+" "+numWords+" "+numChars;
 		}
 		return null;
+	}
+	
+	public String toString() {
+		return "wc";
 	}
 	
 }

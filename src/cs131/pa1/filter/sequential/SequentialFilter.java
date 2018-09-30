@@ -30,6 +30,14 @@ public abstract class SequentialFilter extends Filter {
 		}
 	}
 	
+	public Queue<String> getInput(){
+		return input;
+	}
+	
+	public Queue<String> getOutput(){
+		return output;
+	}
+	
 	public void process(){
 		while (!input.isEmpty()){
 			String line = input.poll();

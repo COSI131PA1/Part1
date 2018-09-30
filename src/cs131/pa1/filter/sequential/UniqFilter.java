@@ -13,6 +13,10 @@ public class UniqFilter extends SequentialFilter{
 			inputSet.add(element);
 		}
 	}
+	
+	public String toString() {
+		return "uniq";
+	}
 
 	@Override
 	protected String processLine(String line) {
@@ -21,4 +25,5 @@ public class UniqFilter extends SequentialFilter{
 		}
 		return null;
 	}
+	
 }
