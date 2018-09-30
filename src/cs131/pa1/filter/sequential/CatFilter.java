@@ -42,6 +42,9 @@ public class CatFilter extends SequentialFilter {
 				if (!f.exists()) {
 					allExist = false;
 					System.out.printf(Message.FILE_NOT_FOUND.toString(), command);
+					if(!(this.next instanceof PrintFilter) && !(this.next instanceof SimplePromptFilter)) {
+						this.output.add("File not found error");
+					}
 				}
 			}
 			if (allExist) {
@@ -59,7 +62,9 @@ public class CatFilter extends SequentialFilter {
 					processedFile++;
 				}
 			}
-			
+			if(output.isEmpty() && next instanceof WcFilter) {
+				output.add("original empty file");
+			}
 		}
 	}
 	

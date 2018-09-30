@@ -35,17 +35,24 @@ public class WcFilter extends SequentialFilter{
 	}
 	
 	public void process() {
-		if (isDone()) {
-			output.add(processLine(null));
-		} else {
-			while (!input.isEmpty()){
-				String line = input.poll();
-				String processedLine = processLine(line);
-				if (processedLine != null){
-					output.add(processedLine);
-				}
-			}	
-		}
+		Boolean orginalInputNotEmpty = !input.isEmpty();
+		if(orginalInputNotEmpty) {
+			if (isDone()) {
+				output.add(processLine(null));
+			} else {
+				if(input.contains("original empty file")) {
+					output.add("0 0 0");
+				} else {
+					while (!input.isEmpty() && !input.contains("File not found error")){
+						String line = input.poll();
+						String processedLine = processLine(line);
+						if (processedLine != null){
+							output.add(processedLine);
+						}
+					}
+				}	
+			}
+		} 
 	}
 	
 	public String toString() {

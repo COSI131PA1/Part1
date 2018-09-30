@@ -39,5 +39,16 @@ public class GrepFilter extends SequentialFilter {
 			return line;
 		}
 		return null;
-	};
+	}
+	
+	public void process() {
+		if (input.contains("File not found error") && (next instanceof WcFilter || next instanceof UniqFilter) ) {
+			output.add("File not found error");
+		} else {
+			super.process();
+			if(output.isEmpty() && next instanceof WcFilter) {
+				output.add("original empty file");
+			}
+		}
+	}
 }
