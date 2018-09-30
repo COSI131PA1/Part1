@@ -1,13 +1,15 @@
 package cs131.pa1.filter.sequential;
+import cs131.pa1.filter.Filter;
 import cs131.pa1.filter.Message;
 import java.io.*;
 
 public class SimplePromptFilter extends SequentialFilter {
 	private String targetFileName;
 	private File targetFile;
+	private FileWriter fw;
 	public SimplePromptFilter (String fileName) {
 		super();
-		String[] fileNameSplit = fileName.split("\\s+");
+		String[] fileNameSplit = fileName.trim().split("\\s+");
 		if (fileNameSplit.length > 0) {
 			targetFileName =  fileNameSplit[1].trim();
 		} else {
@@ -18,27 +20,40 @@ public class SimplePromptFilter extends SequentialFilter {
 		//If not, create a new file. If already existed, rewrite with a new file.
 		if (targetFile.exists()) {
 			targetFile.delete();
-		} 
-		try {
-			targetFile.createNewFile();
-		} catch (IOException ioe) {
-			System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
+		} else {
+			try {
+				targetFile.createNewFile();
+			} catch (IOException ioe) {
+				System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
+			}
+		}
+
+	}
+	
+	public void process() {
+		while(!isDone()) {
+			processLine(input.poll());
 		}
 	}
+	
 	protected String processLine(String line) {
-		FileWriter fw;
+		File f = new File(SequentialREPL.currentWorkingDirectory + Filter.FILE_SEPARATOR + targetFileName);
 		try {
-			fw = new FileWriter(targetFile.getAbsoluteFile());
-		} catch (IOException ioe) {
-			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
-			fw = null;
+			fw = new FileWriter(f, true);
+	        BufferedWriter bw = new BufferedWriter(fw);
+			try {
+				bw.write(line);
+				bw.newLine();
+					bw.flush();
+					bw.close();
+			} catch(IOException e) {
+				System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
+			}
+			
+		} catch (IOException e) {
+			System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
 		}
-		try {
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(line);
-		} catch (IOException ioe) {
-			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
-		}
+
 		return null;
 	}
 	
