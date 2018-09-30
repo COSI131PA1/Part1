@@ -20,12 +20,11 @@ public class SimplePromptFilter extends SequentialFilter {
 		//If not, create a new file. If already existed, rewrite with a new file.
 		if (targetFile.exists()) {
 			targetFile.delete();
-		} else {
-			try {
+		} 
+		try {
 				targetFile.createNewFile();
-			} catch (IOException ioe) {
+		} catch (IOException ioe) {
 				System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
-			}
 		}
 
 	}
@@ -37,23 +36,22 @@ public class SimplePromptFilter extends SequentialFilter {
 	}
 	
 	protected String processLine(String line) {
-		File f = new File(SequentialREPL.currentWorkingDirectory + Filter.FILE_SEPARATOR + targetFileName);
+//		File f = new File(SequentialREPL.currentWorkingDirectory + Filter.FILE_SEPARATOR + targetFileName);
 		try {
-			fw = new FileWriter(f, true);
+			//orginal f
+			fw = new FileWriter(targetFile, true);
 	        BufferedWriter bw = new BufferedWriter(fw);
 			try {
 				bw.write(line);
 				bw.newLine();
-					bw.flush();
-					bw.close();
+				bw.flush();
+				bw.close();
 			} catch(IOException e) {
-				System.out.printf(Message.FILE_NOT_FOUND.toString(), line);
+				System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
 			}
-			
 		} catch (IOException e) {
 			System.out.printf(Message.FILE_NOT_FOUND.toString(), targetFileName);
 		}
-
 		return null;
 	}
 	
