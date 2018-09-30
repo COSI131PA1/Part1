@@ -6,8 +6,7 @@ public class PwdFilter extends SequentialFilter{
 	public boolean isDone = false;
 	
 	public void process() {
-//		String currentDir = SequentialREPL.currentWorkingDirectory;
-		String currentDir = System.getProperty("user.dir");
+		String currentDir = SequentialREPL.currentWorkingDirectory;
 		if (currentDir != null ) {
 			this.output.add(currentDir);
 		}

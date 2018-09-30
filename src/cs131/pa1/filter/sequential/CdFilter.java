@@ -22,11 +22,11 @@ public class CdFilter extends SequentialFilter{
 		String[] currentDirStrings = currentDir.split("/");
 		String[] pathString = path.split("\\s+");
 		String finalDir = pathString[pathString.length-1];
-		if (finalDir.isEmpty() || finalDir.equals("cd")) {
+		if (finalDir.equals("cd")) {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), "cd");
 		} else {
 			File f = new File(finalDir);
-			if (f.isDirectory()) {
+			if (f.isDirectory() && f.exists()) {
 				if (finalDir.equals(".")) {
 					currentDir = SequentialREPL.currentWorkingDirectory;
 				} else if (finalDir.equals("..")){
@@ -45,11 +45,11 @@ public class CdFilter extends SequentialFilter{
 						for (File n: allFiles) {
 							if (finalDir.equals(n.getName())) {
 								currentDir = n.toString();
-								SequentialREPL.currentWorkingDirectory = n.toString();
 							}
 						}
-					} 
+					}
 				}
+				SequentialREPL.currentWorkingDirectory = currentDir;
 			} else {
 				System.out.printf(Message.DIRECTORY_NOT_FOUND.toString(), "cd " + f.getName());
 			} 
