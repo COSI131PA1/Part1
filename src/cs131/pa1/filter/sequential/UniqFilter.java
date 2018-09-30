@@ -7,12 +7,19 @@ public class UniqFilter extends SequentialFilter{
 	private Set<String> inputSet = new HashSet<String>();
 	
 	public void process() {
-		while(!this.input.isEmpty()) {
-			String element = this.input.poll();
-			if(processLine(element) != null) {
-				this.output.add(processLine(element));
+		if (input.contains("File not found error") && (next instanceof WcFilter || next instanceof UniqFilter) ) {
+			output.add("File not found error");
+		} else {
+			while(!this.input.isEmpty()) {
+				String element = this.input.poll();
+				if(processLine(element) != null) {
+					this.output.add(processLine(element));
+				}
+				inputSet.add(element);
 			}
-			inputSet.add(element);
+			if(output.isEmpty() && next instanceof WcFilter) {
+				output.add("original empty file");
+			}
 		}
 	}
 	
