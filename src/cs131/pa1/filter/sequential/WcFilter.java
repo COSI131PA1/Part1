@@ -13,14 +13,11 @@ public class WcFilter extends SequentialFilter{
 	protected String processLine(String line) {
 		if(line.length() != 0) {
 			numLines++;
-			System.out.println(numLines);
 		}
 		String[] words = line.split("\\s+");
 		for (String word : words) {
 			numWords++;
-			System.out.println(numWords);
 			numChars+=word.length();
-			System.out.println(numChars);
 		}
 		if (isDone()) {
 			return numLines+" "+numWords+" "+numChars;
