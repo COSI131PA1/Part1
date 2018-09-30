@@ -3,6 +3,8 @@ package cs131.pa1.filter.sequential;
 import java.io.File;
 import java.util.ArrayList;
 
+import cs131.pa1.filter.Message;
+
 public class CdFilter extends SequentialFilter{
 	private String path;
 	
@@ -14,38 +16,43 @@ public class CdFilter extends SequentialFilter{
 		return "cd";
 	}
 	
+	
 	public void process(){
-		File f = new File(path);
-		if (f.isAbsolute()) {
-			System.out.print("Does Not Support Absolute Path");
-		} 
 		String currentDir = SequentialREPL.currentWorkingDirectory;
 		String[] currentDirStrings = currentDir.split("/");
 		String[] pathString = path.split("\\s+");
 		String finalDir = pathString[pathString.length-1];
-		if (finalDir.equals(".")){
-			currentDir = SequentialREPL.currentWorkingDirectory;
-		} else if (finalDir.equals("..")) { 
-			currentDir = "";
-			for (int m = 0; m < currentDirStrings.length-1; m++) {
-				if (m == 0) {
-					currentDir = currentDir + currentDirStrings[m];
-				} else {
-					currentDir = currentDir + "/" + currentDirStrings[m];
-				}
-			}
+		if (finalDir.isEmpty() || finalDir.equals("cd")) {
+			System.out.printf(Message.REQUIRES_PARAMETER.toString(), "cd");
 		} else {
-			if (!finalDir.isEmpty()) {
-				File currentFile = new File(currentDir);
-				File[] allFiles = currentFile.listFiles();
-				for (File n: allFiles) {
-					if (finalDir.equals(n.getName())) {
-//						System.out.println("equals: " + n);
-						currentDir = n.toString();
-						SequentialREPL.currentWorkingDirectory = n.toString();
+			File f = new File(finalDir);
+			if (f.isDirectory()) {
+				if (finalDir.equals(".")) {
+					currentDir = SequentialREPL.currentWorkingDirectory;
+				} else if (finalDir.equals("..")){
+					currentDir = "";
+					for (int m = 0; m < currentDirStrings.length-1; m++) {
+						if (m == 0) {
+							currentDir = currentDir + currentDirStrings[m];
+						} else {
+							currentDir = currentDir + "/" + currentDirStrings[m];
+						}
 					}
+				} else {
+					File currentFiles = new File(currentDir);
+					if (f.isDirectory()) {
+						File[] allFiles = currentFiles.listFiles();
+						for (File n: allFiles) {
+							if (finalDir.equals(n.getName())) {
+								currentDir = n.toString();
+								SequentialREPL.currentWorkingDirectory = n.toString();
+							}
+						}
+					} 
 				}
-			}
+			} else {
+				System.out.printf(Message.DIRECTORY_NOT_FOUND.toString(), "cd " + f.getName());
+			} 
 		}
 	}
 	
