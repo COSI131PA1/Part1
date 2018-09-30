@@ -5,6 +5,10 @@ import java.io.File;
 public class LsFilter extends SequentialFilter {
 	private boolean processDone = false;
 	
+	public String toString() {
+		return "ls";
+	}
+	
 	public void process() {
 		String currentDirectory = SequentialREPL.currentWorkingDirectory;
 		File currentDir = new File(currentDirectory);

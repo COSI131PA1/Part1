@@ -9,6 +9,10 @@ public class GrepFilter extends SequentialFilter {
 		grabTarget(input);
 	}
 	
+	public String toString() {
+		return "grep";
+	}
+	
 	private void grabTarget (String input) {
 		//to deal with the case that the target string is a phrase (as described in the link given in instruction)
 		if (input.indexOf('\'') != -1) {
@@ -20,8 +24,8 @@ public class GrepFilter extends SequentialFilter {
 		}
 		//to deal with the case that the target string is a single word
 		if (target == null) {
-			String[] inputSplit = input.split(" ");
-			if(inputSplit.length > 0) {
+			String[] inputSplit = input.split("\\s+");
+			if(inputSplit.length > 1) {
 				target = inputSplit[1];
 			}
 		}
@@ -31,7 +35,7 @@ public class GrepFilter extends SequentialFilter {
 		}
 	}
 	protected String processLine (String line) {
-		if (line.contains(target)) {
+		if ((line!=null) && (line.contains(target))) {
 			return line;
 		} 
 		return null;

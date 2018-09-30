@@ -9,7 +9,7 @@ public class SimplePromptFilter extends SequentialFilter {
 		super();
 		String[] fileNameSplit = fileName.split(" ");
 		if (fileNameSplit.length > 0) {
-			targetFileName =  fileNameSplit[1];
+			targetFileName =  fileNameSplit[1].trim();
 		} else {
 			System.out.printf(Message.REQUIRES_PARAMETER.toString(), fileName);
 		}
@@ -22,24 +22,27 @@ public class SimplePromptFilter extends SequentialFilter {
 		try {
 			targetFile.createNewFile();
 		} catch (IOException ioe) {
-			System.out.println("Error creating new file: " + ioe);
+			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
 		}
-		
 	}
 	protected String processLine(String line) {
 		FileWriter fw;
 		try {
 			fw = new FileWriter(targetFile.getAbsoluteFile());
 		} catch (IOException ioe) {
-			System.out.println("Cannot write to file: " + ioe);
+			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
 			fw = null;
 		}
 		try {
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(line);
 		} catch (IOException ioe) {
-			System.out.println("Error when write to file: " + ioe);
+			System.out.printf("Message.FILE_NOT_FOUND.toString()", targetFileName);
 		}
 		return null;
+	}
+	
+	public String toString() {
+		return ">";
 	}
 }

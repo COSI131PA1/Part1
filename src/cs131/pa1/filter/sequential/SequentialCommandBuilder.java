@@ -20,13 +20,14 @@ public class SequentialCommandBuilder {
 				SequentialFilter sequentialFilter = constructFilterFromSubCommand(subCom);
 				if (sequentialFilter == null) {
 					System.out.printf(Message.COMMAND_NOT_FOUND.toString(), subCom);
-					return null;
 				}
 //				if(size !=0 ) {
 //					sequentialFilter.setPrevFilter(subCommandList.get(size-1));
 //				}
-				subCommandList.add(sequentialFilter);
-				size++;
+				if(sequentialFilter != null) {
+					subCommandList.add(sequentialFilter);
+					size++;
+				}
 			}
 			if (command.length() == adjustedCom.length()) {
 				subCommandList.add(new PrintFilter());
@@ -87,7 +88,7 @@ public class SequentialCommandBuilder {
 				}
 				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), errorCom);
 				return null;
-			} else {
+			} else if (formatCheck.length == 2){
 				if (formatCheck[1].trim().lastIndexOf('>') == 0) {
 					System.out.printf(Message.REQUIRES_INPUT.toString(), "> "+formatCheck[1].substring(0, formatCheck[1].indexOf('|')).trim());
 					return null;
@@ -97,12 +98,14 @@ public class SequentialCommandBuilder {
 				} else {
 					return command;
 				}
+			} else {
+				return command;
 			}
 		}
 	}
 	
 	private static SequentialFilter constructFilterFromSubCommand(String subCommand){
-		String[] commandName =  subCommand.split(" ");
+		String[] commandName =  subCommand.split("\\s+");
 		SequentialFilter sequentialFilter = null;
 		if (commandName[0].equals("grep")) {
 			sequentialFilter = new GrepFilter(subCommand);
@@ -147,7 +150,7 @@ public class SequentialCommandBuilder {
 		curr = litr.next();
 		//Check if the first subcommand is a command that requires input
 		if (curr instanceof GrepFilter || curr instanceof SimplePromptFilter || curr instanceof WcFilter || curr instanceof UniqFilter) {
-			System.out.printf(Message.REQUIRES_INPUT.toString(), splitCom[0]);
+			System.out.printf(Message.REQUIRES_INPUT.toString(), splitCom[0].trim());
 			return false;
 		}
 		while (litr.hasNext()) {
@@ -156,13 +159,13 @@ public class SequentialCommandBuilder {
 			//1. Current filter gives output while the next filter cannot have input
 			//2. Current filter gives no output while the next filter requires input
 			if ((next instanceof PwdFilter || next instanceof LsFilter || next instanceof CdFilter || next instanceof CatFilter) && !(curr instanceof CdFilter)) {
-				System.out.printf(Message.CANNOT_HAVE_INPUT.toString(), splitCom[index+1]);
+				System.out.printf(Message.CANNOT_HAVE_INPUT.toString(), splitCom[index+1].trim());
 				return false;
 			} else if ((next instanceof GrepFilter || next instanceof WcFilter || next instanceof SimplePromptFilter || next instanceof UniqFilter) && (curr instanceof CdFilter)) {
-				System.out.printf(Message.REQUIRES_INPUT.toString(), splitCom[index+1]);
+				System.out.printf(Message.CANNOT_HAVE_OUTPUT.toString(), splitCom[index].trim());
 				return false;
-			}
-			next.setPrevFilter(curr);
+			} 
+			curr.setNextFilter(next);
 			curr = next;
 			index++;
 		}
