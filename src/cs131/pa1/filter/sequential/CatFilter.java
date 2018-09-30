@@ -22,7 +22,6 @@ public class CatFilter extends SequentialFilter {
 		String[] inputArray = command.split("\\s+");
 		for (int i = 0; i <  inputArray.length; i++) {
 			if (!inputArray[i].equals("cat")) {
-				//System.out.println(inputArray[i]);
 				this.filesRead.add(inputArray[i]);
 			}
 		}

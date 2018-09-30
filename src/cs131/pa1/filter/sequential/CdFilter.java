@@ -30,11 +30,11 @@ public class CdFilter extends SequentialFilter{
 					return;
 				} 
 				if (finalDir.equals("..")){
-					int separatorIndex = currentDir.lastIndexOf(Filter.FILE_SEPARATOR);	
-					if ((separatorIndex == 1) || (separatorIndex==2)) {  
-				    	System.out.println("This is invalid");
+					int sIndex = currentDir.lastIndexOf(Filter.FILE_SEPARATOR);	
+					if ((sIndex == 1) || (sIndex==2)) {  
+				    	System.out.printf(Message.INVALID_PARAMETER.toString(), "..");
 				     }
-				    SequentialREPL.currentWorkingDirectory = currentDir.substring(0, separatorIndex);
+				    SequentialREPL.currentWorkingDirectory = currentDir.substring(0, sIndex);
 				} else {
 					String changeDir = currentDir + Filter.FILE_SEPARATOR + finalDir;
 					File f = new File(changeDir);
