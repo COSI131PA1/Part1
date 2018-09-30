@@ -36,8 +36,6 @@ public class CatFilter extends SequentialFilter {
 			Boolean allExist = true;
 			for (String fileName: this.filesRead) {
 				File f = new File(fileName);
-//				System.out.println(f.exists());
-//				System.out.println(f.getName());
 				if (!f.exists()) {
 					allExist = false;
 					System.out.printf(Message.FILE_NOT_FOUND.toString(), command);

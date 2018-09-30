@@ -7,6 +7,7 @@ public class UniqFilter extends SequentialFilter{
 	private Set<String> inputSet = new HashSet<String>();
 	
 	public void process() {
+		//To handle that the cat subcommand has an error occurred
 		if (input.contains("File not found error") && (next instanceof WcFilter || next instanceof UniqFilter) ) {
 			output.add("File not found error");
 		} else {

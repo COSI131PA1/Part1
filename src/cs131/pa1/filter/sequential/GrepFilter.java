@@ -42,6 +42,7 @@ public class GrepFilter extends SequentialFilter {
 	}
 	
 	public void process() {
+		//To handle that the prev filter is cat, and an error has occurred
 		if (input.contains("File not found error") && (next instanceof WcFilter || next instanceof UniqFilter) ) {
 			output.add("File not found error");
 		} else {

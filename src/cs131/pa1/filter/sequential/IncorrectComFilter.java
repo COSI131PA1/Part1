@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import cs131.pa1.filter.Filter;
 
+//This filter is aimed for handling when an input subcommand does not exist
+//So that the program can still work to proceed the next subcommand
 public class IncorrectComFilter extends SequentialFilter{
 	public IncorrectComFilter() {
 		super();

@@ -21,7 +21,6 @@ public class SimplePromptFilter extends SequentialFilter {
 		if (targetFile.exists()) {
 			targetFile.delete();
 		} 
-		//System.out.println(SequentialREPL.currentWorkingDirectory+File.separator+targetFileName);
 		this.targetFile = new File(SequentialREPL.currentWorkingDirectory+File.separator+targetFileName);
 	}
 	

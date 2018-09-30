@@ -40,9 +40,11 @@ public class WcFilter extends SequentialFilter{
 			if (isDone()) {
 				output.add(processLine(null));
 			} else {
+				//To deal with the situation of empty file
 				if(input.contains("original empty file")) {
 					output.add("0 0 0");
 				} else {
+					//to deal with the situation of file not found
 					while (!input.isEmpty() && !input.contains("File not found error")){
 						String line = input.poll();
 						String processedLine = processLine(line);
