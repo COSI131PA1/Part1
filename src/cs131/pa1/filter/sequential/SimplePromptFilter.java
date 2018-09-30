@@ -7,7 +7,7 @@ public class SimplePromptFilter extends SequentialFilter {
 	private File targetFile;
 	public SimplePromptFilter (String fileName) {
 		super();
-		String[] fileNameSplit = fileName.split(" ");
+		String[] fileNameSplit = fileName.split("\\s+");
 		if (fileNameSplit.length > 0) {
 			targetFileName =  fileNameSplit[1].trim();
 		} else {

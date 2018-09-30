@@ -40,8 +40,9 @@ public class CdFilter extends SequentialFilter{
 				File[] allFiles = currentFile.listFiles();
 				for (File n: allFiles) {
 					if (finalDir.equals(n.getName())) {
-						currentDir = n.getAbsolutePath();
-						SequentialREPL.currentWorkingDirectory = n.getAbsolutePath();
+//						System.out.println("equals: " + n);
+						currentDir = n.toString();
+						SequentialREPL.currentWorkingDirectory = n.toString();
 					}
 				}
 			}
