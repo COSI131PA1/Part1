@@ -19,7 +19,6 @@ public class CdFilter extends SequentialFilter{
 		return "cd";
 	}
 	
-	
 	public void process(){
 		String[] currentDirStrings = this.currentDir.trim().split("/");
 		String[] pathString = path.split("\\s+");
